@@ -4,7 +4,7 @@
             @csrf
             <textarea
                 name="message"
-                placeholder="{{ __('Whats Up?') }}"
+                placeholder="{{ __('What\'s on your mind?') }}"
                 class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
             >{{ old('message') }}</textarea>
             <x-input-error :messages="$errors->get('message')" class="mt-2" />
@@ -22,7 +22,33 @@
                             <div>
                                 <span class="text-gray-800">{{ $blirp->user->name }}</span>
                                 <small class="ml-2 text-sm text-gray-600">{{ $blirp->created_at->format('j M Y, g:i a') }}</small>
+                                @unless ($blirp->created_at->eq($blirp->updated_at))
+                                    <small class="text-sm text-gray-600"> &middot; {{ __('edited') }}</small>
+                                @endunless
                             </div>
+                            @if ($blirp->user->is(auth()->user()))
+                                <x-dropdown>
+                                    <x-slot name="trigger">
+                                        <button>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                            </svg>
+                                        </button>
+                                    </x-slot>
+                                    <x-slot name="content">
+                                        <x-dropdown-link :href="route('blirps.edit', $blirp)">
+                                            {{ __('Edit') }}
+                                        </x-dropdown-link>
+                                        <form method="POST" action="{{ route('blirps.destroy', $blirp) }}">
+                                            @csrf
+                                            @method('delete')
+                                            <x-dropdown-link :href="route('blirps.destroy', $blirp)" onclick="event.preventDefault(); this.closest('form').submit();">
+                                                {{ __('Delete') }}
+                                            </x-dropdown-link>
+                                        </form>
+                                    </x-slot>
+                                </x-dropdown>
+                            @endif
                         </div>
                         <p class="mt-4 text-lg text-gray-900">{{ $blirp->message }}</p>
                     </div>

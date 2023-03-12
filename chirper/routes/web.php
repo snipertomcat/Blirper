@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('blirps', BlirpController::class)
-    ->only(['index', 'store'])
+    ->only(['index', 'store', 'edit', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
 require __DIR__.'/auth.php';

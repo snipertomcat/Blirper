@@ -45,6 +45,6 @@ class User extends Authenticatable
 
     public function blirps(): HasMany
     {
-        return $this->hasMany(Blirp::class, "id", "user_id");
+        return $this->hasMany(Blirp::class);
     }
 }

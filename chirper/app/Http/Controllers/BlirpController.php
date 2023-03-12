@@ -54,17 +54,29 @@ class BlirpController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Blirp $blirp)
+    public function edit(Blirp $blirp): View
     {
-        //
+        $this->authorize('update', $blirp);
+
+        return view('blirps.edit', [
+            'blirp' => $blirp
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Blirp $blirp)
+    public function update(Request $request, Blirp $blirp): RedirectResponse
     {
-        //
+        $this->authorize('update', $blirp);
+
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
+
+        $blirp->update($validated);
+
+        return redirect(route('blirps.index'));
     }
 
     /**
@@ -72,6 +84,10 @@ class BlirpController extends Controller
      */
     public function destroy(Blirp $blirp)
     {
-        //
+        $this->authorize('delete', $blirp);
+
+        $blirp->delete();
+
+        return redirect(route('blirps.index'));
     }
 }
