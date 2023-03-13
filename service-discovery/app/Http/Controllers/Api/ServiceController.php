@@ -14,5 +14,4 @@ class ServiceController extends Controller
     {
         return Auth::guard('sanctum')->user();
     }
-
 }

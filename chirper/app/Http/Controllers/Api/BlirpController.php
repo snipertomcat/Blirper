@@ -8,7 +8,7 @@ use Orion\Http\Controllers\Controller;
 
 class BlirpController extends Controller
 {
-    protected $model = \App\Models\Blirp::class;
+    protected $model = Blirp::class;
 
     public function resolveUser()
     {

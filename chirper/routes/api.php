@@ -1,4 +1,4 @@
-<?php
+                  <?php
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -22,11 +22,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('health_check', function() {
+    return new \Illuminate\Http\Response("OK", 200);
+});
+
 Route::group(['as' => 'api.'], function() {
     Orion::resource('blirps', \App\Http\Controllers\Api\BlirpController::class);
-})->middleware('auth:sanctum');
+});
 
-Orion::resource('blirps', \App\Http\Controllers\Api\BlirpController::class);
+
 Route::post('/tokens/create', function (Request $request) {
     $token = $request->user()->createToken($request->token_name);
 
