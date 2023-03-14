@@ -5,14 +5,11 @@ namespace App\Services;
 use App\DataObjects\RequestMessage;
 use App\DataObjects\ResponseMessage;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Log;
 use JsonException;
 
 class ServiceDiscovery implements ApiGatewayService
 {
     protected $services = [];
-
-    protected $tokens = [];
 
     /**
      * @throws JsonException
@@ -23,8 +20,9 @@ class ServiceDiscovery implements ApiGatewayService
         $this->services = $services;
     }
 
-    public function generateTokens(): void
+    public function generateTokens(): array
     {
+        $tokens = [];
         foreach ($this->services as $service) {
             $guzzle = new Client();
             $url = $service['address'] . '/api/sanctum/token';
@@ -38,10 +36,18 @@ class ServiceDiscovery implements ApiGatewayService
                     'CONTENT_TYPE' => 'application/json'
                 ]
             ]);
-            $token = $response->getBody()->getContents();
-            //update services array with token for each service
-            $this->tokens[$service['name']]['token'] = $token;
+            $tokenString = $response->getBody()->getContents();
+            $tokenString = trim($tokenString);
+            $tokenArray = [
+                'service' => $service['name'],
+                'device_type' => 'service-discovery',
+                'token' => $tokenString
+            ];
+
+            $tokens[] = $tokenArray;
         }
+
+        return $tokens;
     }
 
     public function registerDefaultServices(): array
@@ -49,23 +55,18 @@ class ServiceDiscovery implements ApiGatewayService
         return  [
             [
                 'name' => env('BLIRPER_SERVICE_NAME') ?? 'blirper',
-                'address' => env('BLIRPER_ADDRESS') ?? 'http://chirper.test',
+                'address' => env('BLIRPER_ADDRESS') ?? 'http://localhost:85',
             ],
-            [
+        /*    [
                 'name' => env('USER_CONTEXT_NAME') ?? 'users',
                 'address' => env('USER_CONTEXT_ADDRESS') ?? 'http://user-context.test',
-            ]
+            ]*/
         ];
     }
 
     public function getServices()
     {
         return $this->services;
-    }
-
-    public function getTokens()
-    {
-        return $this->tokens;
     }
 
     public function checkValidRequest(RequestMessage $requestMessage): bool
