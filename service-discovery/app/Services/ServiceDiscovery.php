@@ -41,7 +41,8 @@ class ServiceDiscovery implements ApiGatewayService
             $tokenArray = [
                 'service' => $service['name'],
                 'device_type' => 'service-discovery',
-                'token' => $tokenString
+                'token' => $tokenString,
+                'address' => $service['address']
             ];
 
             $tokens[] = $tokenArray;
