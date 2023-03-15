@@ -45,7 +45,7 @@ class ServiceDiscovery implements ApiGatewayService
                 'address' => $service['address']
             ];
 
-            $tokens[] = $tokenArray;
+            $tokens[$service['name']] = $tokenArray;
         }
 
         return $tokens;
@@ -67,7 +67,11 @@ class ServiceDiscovery implements ApiGatewayService
 
     public function getServices()
     {
-        return $this->services;
+        $serviceRegistry = [];
+        foreach ($this->services as $service) {
+             $serviceRegistry[$service['name']] = $service;
+        }
+        return $serviceRegistry;
     }
 
     public function checkValidRequest(RequestMessage $requestMessage): bool

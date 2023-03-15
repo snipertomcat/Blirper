@@ -22,10 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('health_check', function() {
-    return new \Illuminate\Http\Response("OK", 200);
-});
-
 Route::group(['as' => 'api.'], function() {
     Orion::resource('blirps', \App\Http\Controllers\Api\BlirpController::class);
 });

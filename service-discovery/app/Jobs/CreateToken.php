@@ -32,7 +32,6 @@ class CreateToken implements ShouldQueue
                 $this->$key = $val;
             }
         }
-        dd($this);
     }
 
     /**

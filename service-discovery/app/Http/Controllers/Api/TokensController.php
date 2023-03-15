@@ -28,7 +28,7 @@ class TokensController extends Controller
         $tokens = $this->serviceDiscovery->generateTokens();
 
         foreach ($tokens as $token) {
-            $this->dispatchSync(CreateToken::class, $token);
+            $this->dispatchSync(new CreateToken($token));
         }
 
         return new JsonResponse($tokens, 200);

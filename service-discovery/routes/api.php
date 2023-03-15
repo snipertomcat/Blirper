@@ -29,7 +29,9 @@ Route::get('health_check', function() {
 
 Route::group(['as' => 'api.'], function() {
     Orion::resource('services', \App\Http\Controllers\Api\ServiceController::class);
+    Route::get('all-blirps', "App\Http\Controllers\Api\ChirperController@index");
 })->middleware('auth:sanctum');
+
 
 Route::post('/tokens/create', static function (Request $request) {
     $token = $request->user()->createToken($request->token_name);
@@ -55,3 +57,4 @@ Route::post('/sanctum/token', static function (Request $request) {
 
     return $user->createToken($request->device_name)->plainTextToken;
 });
+
