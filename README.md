@@ -18,3 +18,7 @@ This sercice simply holds "Blirps", or text messages created by an authenitcated
 ### chirp-board
 
 This service conglomerates all the chrips in the system (that is, residing in the chirper service) and blasts them to a single page for public viewing.
+
+
+## ENV FILES
+To make it work, you will need several .env files, one for each application. These can be acquired by emailing 'hemham914@gmail.com'
