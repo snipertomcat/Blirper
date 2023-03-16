@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractApiService implements  ApiRequestMessage, ApiResponseMessage
 {
-    protected const SANCTUM_AUTHENTICATION_URI = '/api/sanctum/token';
+    protected const SANCTUM_AUTHENTICATION_URI = 'api/sanctum/token';
 
     public function __construct(public TokenRepository $tokenRepository, public string $service="blirper")
     {
@@ -24,11 +24,14 @@ abstract class AbstractApiService implements  ApiRequestMessage, ApiResponseMess
 
     public function getToken(string $service): string
     {
+        
         $prevToken = $this->tokenRepository->getExistingToken($service);
+
         if (isset($prevToken)) {
             return $prevToken->token;
         }
-        $url = env('BLIRPER_ADDRESS') . '/' . static::SANCTUM_AUTHENTICATION_URI;
+        $url = ChirperService::CHIRPER_DEFAULT_ADDRESS . '/' . static::SANCTUM_AUTHENTICATION_URI;
+
         $client = new Client();
         $response = $client->post($url, [
             'json' => [
@@ -45,14 +48,24 @@ abstract class AbstractApiService implements  ApiRequestMessage, ApiResponseMess
         return $token;
     }
 
-    public function buildRequest(string $token, string $endpoint, string $method): \Psr\Http\Message\ResponseInterface
+    public function buildRequest(string $token, string $endpoint, string $method, array $body = []): \Psr\Http\Message\ResponseInterface
     {
         $client = new \GuzzleHttp\Client();
-        $response = $client->request($method, $endpoint, [
-            'headers' => [
-                'Authorization' => "Bearer " . $token
-            ]
-        ]);
+        if (empty($body)) {
+            $response = $client->request($method, $endpoint, [
+                'headers' => [
+                    'Authorization' => "Bearer " . $token
+                ]
+            ]);
+        } else {
+            $response = $client->request($method, $endpoint, [
+                'headers' => [
+                    'Authorization' => "Bearer " . $token,
+                    'Content-Type' => "application/json"
+                ],
+                'json' => $body
+            ]);
+        }
 
         return $response;
     }
