@@ -21,6 +21,8 @@ class ChirperService extends AbstractApiService implements ApiBasicCrud
             $endpoint = static::CHIRPER_DEFAULT_ADDRESS . '/api/blirps/' . $id;
         }
 
+        dd($builtRequest);
+
         $builtRequest = $this->buildRequest($token, $endpoint, 'GET');
 
         return $builtRequest->getBody()->getContents();

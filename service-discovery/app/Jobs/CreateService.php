@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use JetBrains\PhpStorm\Pure;
 
 class CreateService implements ShouldQueue
 {
@@ -22,9 +23,9 @@ class CreateService implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(ServiceObject $service)
+    #[Pure] public function __construct(ServiceObject $service)
     {
-        $data = $service->toArray();
+        $this->data = $service->toArray();
     }
 
     /**
@@ -32,15 +33,24 @@ class CreateService implements ShouldQueue
      */
     public function handle(): void
     {
-        //all validation is done at this point, fire in the hole!
         try {
-            $service = new Service($this->data);
-            $service->save();
+            try {
+                // We only want one copy of each service registered in the system, so i used firstOrNew
+                // As a side note, i could have opted for a database constraint in the form of a unique index
+                $service = Service::firstOrNew(['service' => $this->data['name']]);
+                $service->fill($this->data);
+                $service->save();
+            } catch (\Exception $e) {
+                $logData = json_encode([
+                    'status' => $e->getCode(),
+                    'error' => $e->getMessage(),
+                    'data' => $this->data
+                ], JSON_THROW_ON_ERROR);
+                Log::critical($logData);
+                throw new \Exception("Service could not be registered");
+            }
         } catch (\Exception $e) {
-            Log::critical("Could not create service object from these params: " . print_r($this->data));
+            echo $e->getMessage();
         }
-
-
-
     }
 }

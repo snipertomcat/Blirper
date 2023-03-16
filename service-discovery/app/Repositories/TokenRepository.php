@@ -23,6 +23,6 @@ class TokenRepository
             'device_type' => $deviceType
         ];
 
-        dispatch(new CreateToken($params));
+        return dispatch(new CreateToken($params));
     }
 }

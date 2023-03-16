@@ -12,9 +12,6 @@ class ServiceFactory
     {
         return new ServiceObject(
             name: Arr::get($data, 'name'),
-            token: Arr::get($data, 'token'),
-            address: Arr::get($data, 'address'),
-            deviceType: Arr::get($data, 'device_type')
         );
     }
 }

@@ -30,6 +30,7 @@ Route::get('health_check', function() {
 Route::group(['as' => 'api.'], function() {
     Orion::resource('services', \App\Http\Controllers\Api\ServiceController::class);
     Route::get('all-blirps', "App\Http\Controllers\Api\ChirperController@index");
+    Route::post('services/register', "App\Http\Controllers\Api\ServiceController@register");
 })->middleware('auth:sanctum');
 
 
