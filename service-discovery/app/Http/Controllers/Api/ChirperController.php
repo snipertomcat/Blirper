@@ -17,14 +17,7 @@ class ChirperController extends Controller
 
     public function index()
     {
-        /*$serviceRegistry = [];
-        $serviceDiscovery = new ServiceDiscovery();
-        if (is_null($serviceDiscovery)) {
-            throw new \Exception("Cannot create service discovery class without settings");
-        }
-        $chirperServiceParams = $serviceDiscovery->getServices()['blirper'];*/
-
-        dd( $this->chirper->getAllBlirps());
+        $blirps = $this->chirper->read();
     }
 
     public function resolveUser()

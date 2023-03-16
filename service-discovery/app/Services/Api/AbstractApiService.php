@@ -24,7 +24,7 @@ abstract class AbstractApiService implements  ApiRequestMessage, ApiResponseMess
 
     public function getToken(string $service): string
     {
-        
+        dd(Token::query()->where('service', 'blirper')->get());
         $prevToken = $this->tokenRepository->getExistingToken($service);
 
         if (isset($prevToken)) {
