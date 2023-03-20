@@ -23,7 +23,7 @@ class CreateService implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    #[Pure] public function __construct(ServiceObject $service)
+    #[Pure] public function __construct(DataObjectContract $service)
     {
         $this->data = $service->toArray();
     }
@@ -37,7 +37,7 @@ class CreateService implements ShouldQueue
             try {
                 // We only want one copy of each service registered in the system, so i used firstOrNew
                 // As a side note, i could have opted for a database constraint in the form of a unique index
-                $service = Service::firstOrNew(['service' => $this->data['name']]);
+                $service = Service::firstOrNew(['name' => $this->data['name']]);
                 $service->fill($this->data);
                 $service->save();
             } catch (\Exception $e) {

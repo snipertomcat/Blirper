@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\DataObjects\ServiceObject;
 use App\Factories\ServiceFactory;
+use App\Factories\TokenFactory;
 use App\Http\Requests\RegisterServiceRequest;
 use App\Jobs\CreateService;
 use App\Jobs\CreateToken;
 use App\Models\Service;
+use App\Repositories\TokenRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -19,8 +21,8 @@ class ServiceController extends Controller
 
     public function __construct(
         private readonly ServiceFactory $serviceFactory,
-        private readonly CreateService $createServiceCommand,
-        private readonly CreateToken $createTokenCommand)
+        private readonly TokenFactory $tokenFactory,
+        private readonly TokenRepository $tokenRepository)
     {
         parent::__construct();
     }
@@ -28,20 +30,29 @@ class ServiceController extends Controller
     /**
      * Registers a new service with the service-discovery system.
      * Will return any existing one before creating a new one
-     * // TODO: create cron job to purge service registration records if they are passed their expiration (services.ttl)
      *
      * @param RegisterServiceRequest $request
      * @return JsonResponse
      */
     public function register(RegisterServiceRequest $request): JsonResponse
     {
-        $serviceObject = $this->serviceFactory->make($request->validated());
+        $validated = $request->validated();
+        //register service first
+        $serviceObject = $this->serviceFactory->make($validated('name'));
 
-        $command = new $this->createServiceCommand($serviceObject);
+        dispatch(new CreateService($serviceObject));
 
-        $this->dispatch($command);
+        //get the created record from DB (with dispatch() being an asynchronous)
+        $serviceId = $this->tokenRepository->getTokenByService($validated('name'))->id;
 
-        dd($service);
+        if (!is_null($serviceId)) {
+            $tokenObject = $this->tokenFactory->make($request->except('name'));
+
+            dispatch(new CreateToken($tokenObject));
+            return new JsonResponse(['status' => 200]);
+        }
+
+        return new JsonResponse(['status' => 500, 'error' => "Service record could not be saved"]);
     }
 
     public function resolveUser()

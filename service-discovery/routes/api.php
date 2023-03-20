@@ -34,13 +34,6 @@ Route::group(['as' => 'api.'], function() {
 })->middleware('auth:sanctum');
 
 
-Route::post('/tokens/create', static function (Request $request) {
-    $token = $request->user()->createToken($request->token_name);
-
-    return ['token' => $token->plainTextToken];
-});
-
-
 Route::post('/sanctum/token', static function (Request $request) {
     $request->validate([
         'email' => 'required|email',

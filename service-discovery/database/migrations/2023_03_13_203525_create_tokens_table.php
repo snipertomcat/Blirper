@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('tokens', static function (Blueprint $table) {
             $table->id();
             $table->string('token');
-            $table->string('service');
             $table->string('device_type');
             $table->string('address');
             $table->integer('ttl')->default(0);

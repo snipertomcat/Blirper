@@ -10,6 +10,6 @@ class Token extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['service', 'token', 'ttl', 'device_type', 'address'];
+    protected $fillable = ['service_id', 'token', 'ttl', 'device_type', 'address'];
 
 }

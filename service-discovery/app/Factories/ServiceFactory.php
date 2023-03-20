@@ -8,10 +8,10 @@ use Illuminate\Support\Arr;
 
 class ServiceFactory
 {
-    public function make(array $data): DataObjectContract
+    public function make(string $name): DataObjectContract
     {
         return new ServiceObject(
-            name: Arr::get($data, 'name'),
+            name: $name
         );
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DataObjects\RequestMessage;
 use App\DataObjects\ResponseMessage;
+use App\Repositories\TokenRepository;
 use GuzzleHttp\Client;
 use JsonException;
 
@@ -12,12 +13,11 @@ class ServiceDiscovery implements ApiGatewayService
     protected $services = [];
 
     /**
-     * @throws JsonException
+     * @param TokenRepository $tokenRepository
      */
-    public function __construct()
+    public function __construct(private readonly TokenRepository $tokenRepository)
     {
-        $services = $this->registerDefaultServices();
-        $this->services = $services;
+        $this->tokens = $this->tokenRepository->getAllTokens();
     }
 
     public function generateTokens(): array
@@ -51,20 +51,6 @@ class ServiceDiscovery implements ApiGatewayService
         return $tokens;
     }
 
-    public function registerDefaultServices(): array
-    {
-        return  [
-            [
-                'name' => env('BLIRPER_SERVICE_NAME') ?? 'blirper',
-                'address' => env('BLIRPER_ADDRESS') ?? 'http://localhost:85',
-            ],
-        /*    [
-                'name' => env('USER_CONTEXT_NAME') ?? 'users',
-                'address' => env('USER_CONTEXT_ADDRESS') ?? 'http://user-context.test',
-            ]*/
-        ];
-    }
-
     public function getServices()
     {
         $serviceRegistry = [];
@@ -82,5 +68,10 @@ class ServiceDiscovery implements ApiGatewayService
     public function checkValidResponse(ResponseMessage $responseMessage): bool
     {
         // TODO: Implement checkValidResponse() method.
+    }
+
+    public function registerDefaultServices(): array
+    {
+        // TODO: Implement registerDefaultServices() method.
     }
 }

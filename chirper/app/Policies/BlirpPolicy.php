@@ -21,7 +21,7 @@ class BlirpPolicy
      */
     public function view(User $user, Blirp $blirp): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class BlirpPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class BlirpPolicy
      */
     public function restore(User $user, Blirp $blirp): bool
     {
-        //
+        return $this->update($user, $blirp);
     }
 
     /**
@@ -61,6 +61,6 @@ class BlirpPolicy
      */
     public function forceDelete(User $user, Blirp $blirp): bool
     {
-        //
+        return $this->update($user, $blirp);
     }
 }

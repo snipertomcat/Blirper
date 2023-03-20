@@ -2,36 +2,28 @@
 
 namespace App\Jobs;
 
+use App\DataObjects\DataObjectContract;
 use App\Models\Token;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use JetBrains\PhpStorm\Pure;
 
 class CreateToken implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private string $service;
-
-    private string $deviceType;
-
-    private string $address;
-
-    private string $token;
+    protected array $data;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(array $params)
+    #[Pure] public function __construct(DataObjectContract $token)
     {
-        foreach ($params as $key=>$val) {
-            if (isset($this->$key)) {
-                $this->$key = $val;
-            }
-        }
+        $this->data = $token->toArray();
     }
 
     /**
@@ -39,17 +31,24 @@ class CreateToken implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->prune();
+        try {
+            try {
+                $token = Token::firstOrNew(['service_id' => $this->data['serviceId']]);
+                $token->fill($this->data);
+                $token->save();
+            } catch (\Exception $e) {
+                $logData = json_encode([
+                    'status' => $e->getCode(),
+                    'error' => $e->getMessage(),
+                    'data' => $this->data
+                ], JSON_THROW_ON_ERROR);
+                Log::critical($logData);
+                throw new \Exception("Service could not be registered");
+            }
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
 
-        Token::create([
-            'service' => $this->service,
-            'device_type' => $this->deviceType,
-            'token' => $this->token
-        ]);
-    }
-
-    private function prune()
-    {
-        Token::where('service', $this->service)->delete();
+        dd($this);
     }
 }

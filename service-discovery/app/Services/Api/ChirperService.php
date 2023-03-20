@@ -10,7 +10,7 @@ class ChirperService extends AbstractApiService implements ApiBasicCrud
 {
     public const CHIRPER_DEFAULT_ADDRESS = 'http://localhost:85';
 
-    public function read($id = null): string
+    public function read(int $id = null): string
     {
         //retrieve an existing token or create a new one (handled in the parent class)
         $token = $this->getToken('blirper');
@@ -20,8 +20,6 @@ class ChirperService extends AbstractApiService implements ApiBasicCrud
         } else {
             $endpoint = static::CHIRPER_DEFAULT_ADDRESS . '/api/blirps/' . $id;
         }
-
-        dd($builtRequest);
 
         $builtRequest = $this->buildRequest($token, $endpoint, 'GET');
 

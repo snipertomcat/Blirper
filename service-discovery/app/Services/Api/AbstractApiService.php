@@ -17,20 +17,24 @@ abstract class AbstractApiService implements  ApiRequestMessage, ApiResponseMess
     {
     }
 
-    public function newFromToken(string $token, string $service): void
+    public function newFromToken(string $token, string $service)
     {
-        $this->tokenRepository->newFromToken($token, $service );
+        //return Token::create($this->tokenRepository->newFromToken($token, $service ));
+
     }
 
     public function getToken(string $service): string
     {
-        dd(Token::query()->where('service', 'blirper')->get());
-        $prevToken = $this->tokenRepository->getExistingToken($service);
+        //get stored token
+
+        /*$prevToken = $this->tokenRepository->getExistingToken($service);
 
         if (isset($prevToken)) {
             return $prevToken->token;
         }
         $url = ChirperService::CHIRPER_DEFAULT_ADDRESS . '/' . static::SANCTUM_AUTHENTICATION_URI;
+        */
+        $url = "localhost:85/api/sanctum/token";
 
         $client = new Client();
         $response = $client->post($url, [

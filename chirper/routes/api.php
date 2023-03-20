@@ -1,4 +1,4 @@
-                  <?php
+<?php
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -52,3 +52,11 @@ Route::post('/sanctum/token', function (Request $request) {
     return $user->createToken($request->device_name)->plainTextToken;
 });
 
+
+Route::get('/', function () {
+  return response()->json([
+      'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
+  ]);
+});
+
+Route::post('api_test', '\App\Http\Controllers\ClientApi\BookController@getAllBooks');
